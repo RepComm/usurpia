@@ -1,0 +1,30 @@
+{
+  "name": "snowpack-ts-template",
+  "version": "1.0.0",
+  "description": "A template for using snowpack and typescript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "snowpack dev",
+    "build": "snowpack build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RepComm/snowpack-ts-template.git"
+  },
+  "keywords": [
+    "snowpack",
+    "ts",
+    "template"
+  ],
+  "author": "Jonathan Crowder",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/RepComm/snowpack-ts-template/issues"
+  },
+  "homepage": "https://github.com/RepComm/snowpack-ts-template#readme",
+  "devDependencies": {
+    "@snowpack/plugin-babel": "^2.1.7",
+    "snowpack": "^3.8.3"
+  }
+}
