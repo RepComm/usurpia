@@ -1,1 +1,1 @@
-declare const msg: string;
+export declare function doSomeOtherStuff(): void;
