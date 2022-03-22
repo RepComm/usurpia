@@ -14,16 +14,46 @@ import { GameInput } from "@repcomm/gameinput-ts";
 
 let input = GameInput.get();
 
-input.getOrCreateAxis("walk")
-.addInfluence({
-  value: -1,
-  keys:["w"]
-})
-.addInfluence({
-  value: 1,
-  keys:["s"]
+input.addJsonConfig({
+  axes: [
+    {
+      id: "walk",
+      influences: [
+        {
+          value: -1,
+          keys: ["w"]
+        },
+        {
+          value: 1,
+          keys: ["s"]
+        }
+      ]
+    },
+    {
+      id: "strafe",
+      influences: [
+        {
+          value: -1,
+          keys: ["a"]
+        },
+        {
+          value: 1,
+          keys: ["d"]
+        }
+      ]
+    }
+  ],
+  buttons: [
+    {
+      id: "jump",
+      influences: [
+        {
+          keys: [" "]
+        }
+      ]
+    }
+  ]
 });
-
 
 async function main() {
   console.log("Loaded");
@@ -33,6 +63,6 @@ async function main() {
     .setId("renderer")
     .mount(container);
 
-  
+
 }
 PhysicsLoader("./lib/ammo/kripken", () => main());

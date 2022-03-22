@@ -7,6 +7,7 @@ import { GLTFInstancer, loadGLTF } from "./gltf";
 import { GameInput } from "@repcomm/gameinput-ts";
 import { FlowCameraController } from "./controllers/flowcamera";
 import { Player } from "./units/player";
+import { LookCamera } from "@repcomm/three.lookcamera";
 
 /**Holds info on a scene, its physics, and the camera rendering it
  * stfu, i know there can be multiple cameras.
@@ -134,21 +135,6 @@ export class Renderer extends Panel {
     
     let player = new Player(this.currentMetaScene);
 
-    let flowCam = new FlowCameraController();
-    let camera = new THREE.PerspectiveCamera(75, 1, 0.01, 1000);
-    scene.add(camera);
-
-    flowCam.attachCamera(camera);
-    flowCam.setLookTarget(player.getCameraLookTarget());
-    flowCam.setAttachPoint(player.getCameraAttachPoint());
-
-    // helicopter.getCameraAttachPoint().add(lookcam);
-    // scene.add(lookcam as any);
-    // lookcam.position.set(0, 10, 20);
-
-    this.defaultMetaScene.camera = camera;//lookcam.getCamera() as any;
-
-
     let input = GameInput.get();
 
     //keep looking until this is false
@@ -168,8 +154,6 @@ export class Renderer extends Panel {
       let delta = now - last;
       let deltaSeconds = delta / 1000;
 
-      flowCam.update();
-
       //animation
       player.update(delta);
       //player controls
@@ -180,20 +164,12 @@ export class Renderer extends Panel {
 
       if (!input.raw.pointerIsLocked()) {
         if (input.raw.getPointerButton(0)) {
-          //input.raw.pointerTryLock(this.canvas.element);
+          input.raw.pointerTryLock(this.canvas.element);
         }
         // lookcam.setLookEnabled(false);
       } else {
         // lookcam.setLookEnabled(true);
       }
-
-      let mx = input.builtinMovementConsumer.getDeltaX();
-      let my = input.builtinMovementConsumer.getDeltaY();
-      // console.log(mx, my);
-      // lookcam.addRotationInput(
-      //   mx,
-      //   my
-      // );
 
       physicsEnlapsed += delta;
       if (physicsEnlapsed >= physicsTargetDelta) {

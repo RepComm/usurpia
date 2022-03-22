@@ -1,0 +1,40 @@
+{
+  "axes": [
+    {
+      "id": "walk",
+      "influences": [
+        {
+          "value": -1,
+          "keys": ["w"]
+        },
+        {
+          "value": 1,
+          "keys": ["s"]
+        }
+      ]
+    },
+    {
+      "id": "strafe",
+      "influences": [
+        {
+          "value": -1,
+          "keys": ["a"]
+        },
+        {
+          "value": 1,
+          "keys": ["d"]
+        }
+      ]
+    }
+  ],
+  "buttons": [
+    {
+      "id": "jump",
+      "influences": [
+        {
+          "keys": [" "]
+        }
+      ]
+    }
+  ]
+}
