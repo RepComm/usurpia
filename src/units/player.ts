@@ -8,7 +8,7 @@ import { GLTFInstancer } from "../gltf";
 import { MetaScene } from "../renderer";
 import { debounce, DebounceInfo } from "../utils/debounce";
 import {lerp} from "../utils/curve";
-import { Vector3 } from "three";
+import { Quaternion, Vector3 } from "three";
 
 const VEC3_UP = new Vector3(0, 1, 0);
 
@@ -27,14 +27,15 @@ export class Player {
 
   private instanceGLTF: GLTF;
   private mixer: THREE.AnimationMixer;
-  private shape: ExtendedObject3D; //ExtendedMesh;
-  private shapeBody: ExtendedObject3D;
+  private root: ExtendedObject3D; //ExtendedMesh;
+  private fp: ExtendedObject3D;
 
   private walkForce: number;
   private walkForceVector: Vector3;
   private maxJumpForce: number;
   private jumpDebounce: DebounceInfo;
   private isOnGround: boolean;
+  private viewDirection: Quaternion;
 
   private _isReady: boolean;
 
@@ -56,6 +57,7 @@ export class Player {
       timeDebounce: 100,
       timeLast: 0
     };
+    this.viewDirection = new Quaternion();
 
     this.metaScene = metaScene;
 
@@ -73,14 +75,14 @@ export class Player {
 
       this.mixer.timeScale = 0.01;
 
-      this.shape = this.instanceGLTF.scene as any;//this.instanceGLTF.scene.getObjectByName("root") as any;
-      this.shape.position.set(0, 10, 0);
-      this.shape.add(this.lookCamera);
+      this.root = this.instanceGLTF.scene as any;//this.instanceGLTF.scene.getObjectByName("root") as any;
+      this.root.position.set(0, 10, 0);
+      this.root.add(this.lookCamera);
 
-      this.shapeBody = this.shape.getObjectByName("root") as any;
+      this.fp = this.root.getObjectByName("fp") as any;
 
       this.metaScene.physics.add.existing(
-        this.shape as any,
+        this.root as any,
         {
           shape: "box",
           width: 0.25,
@@ -92,10 +94,10 @@ export class Player {
           addChildren: true,
         }
       );
-      this.shape.body.setAngularFactor(0,0,0);
+      this.root.body.setAngularFactor(0,0,0);
 
 
-      this.shape.body.on.collision((otherObject, type) => {
+      this.root.body.on.collision((otherObject, type) => {
         this.isOnGround = type === "collision" || type === "start";
       });
 
@@ -129,30 +131,31 @@ export class Player {
       input.getButtonValue("jump") &&
       debounce(this.jumpDebounce)
     ) {
-      this.shape.body.applyCentralImpulse(
+      this.root.body.applyCentralImpulse(
         0, this.maxJumpForce, 0
       );
     }
-    let rotationAngleDiff = this.lookCamera.rotation.y - this.shape.body.rotation.y;
-    if (Math.abs(rotationAngleDiff) > 0.02) {
-      // this.shape.body.applyLocalTorque(0, rotationAngleDiff, 0);
-      this.shapeBody.rotation.y = lerp(
-        this.shapeBody.rotation.y,
-        this.lookCamera.rotation.y,
-        0.2
-      );
-    }
+    this.viewDirection.copy(this.lookCamera.quaternion);
+    this.viewDirection.multiply( (this.lookCamera as any).pitch.quaternion );
+
+    this.fp.quaternion.slerp(this.viewDirection, 0.2);
+    
+    // this.shapeBody.rotation.y = lerp(
+    //   this.shapeBody.rotation.y,
+    //   this.lookCamera.rotation.y,
+    //   0.2
+    // );
 
     //walk forward/backward
     //copy world direction
-    this.shapeBody.getWorldDirection(this.walkForceVector);
+    this.fp.getWorldDirection(this.walkForceVector);
     this.walkForceVector
     // .normalize()
     //multiply by walk direction (fwd/bwd)
     .multiplyScalar(this.walkForce * input.getAxisValue("walk"));
 
     //apply the force
-    this.shape.body.applyForce(
+    this.root.body.applyForce(
       this.walkForceVector.x,
       this.walkForceVector.y,
       this.walkForceVector.z
@@ -160,14 +163,14 @@ export class Player {
 
     //strafe left/right
     //get world direction
-    this.shapeBody.getWorldDirection(this.walkForceVector);
+    this.fp.getWorldDirection(this.walkForceVector);
     this.walkForceVector
     .applyAxisAngle( VEC3_UP, Math.PI * 0.5)
     // .normalize()
     .multiplyScalar(this.walkForce * input.getAxisValue("strafe"));
 
     
-    this.shape.body.applyForce(
+    this.root.body.applyForce(
       this.walkForceVector.x,
       this.walkForceVector.y,
       this.walkForceVector.z,
