@@ -23,6 +23,8 @@ const SKYDOME_SCENE = new GLTFInstancer("./resources/skydome.glb");
 
 const TEST_SCENE = new GLTFInstancer("./resources/test.glb");
 
+const TAVERN_SCENE = new GLTFInstancer("./resources/tavern.glb");
+
 export class Renderer extends Panel {
   static SINGLETON: Renderer;
 
@@ -99,6 +101,25 @@ export class Renderer extends Panel {
       scene.add(skydome.scene);
       skydome.scene.scale.set(100, 100, 100);
     });
+
+    TAVERN_SCENE.getInstance().then((model)=>{
+      scene.add(model.scene);
+      
+      model.scene.translateZ(-6);
+      let hull = model.scene.getObjectByName("hull");
+
+      this.currentMetaScene.physics.add.existing(
+        hull as any,
+        {
+          shape: "concave",
+          // autoCenter: true,
+          collisionFlags: 1,
+          mass: 0,
+          // addChildren: true
+        }
+      );
+    });
+
     TEST_SCENE.getInstance().then((model)=>{
       scene.add(model.scene);
       let ground = model.scene.getObjectByName("ground");
@@ -115,6 +136,7 @@ export class Renderer extends Panel {
       );
       
       let tree = model.scene.getObjectByName("tree");
+      tree.translateZ(4);
 
       this.currentMetaScene.physics.add.existing(
         tree as any,

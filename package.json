@@ -39,6 +39,7 @@
     "@repcomm/exponent-ts": "^1.1.9",
     "@repcomm/gameinput-ts": "^1.10.4",
     "@repcomm/three.lookcamera": "^1.0.4",
+    "@repcomm/three.terrain": "^1.6.0",
     "@types/three": "^0.127.1",
     "enable3d": "^0.22.0"
   }

@@ -54,7 +54,7 @@ export class Player {
     this.walkForceVector = new Vector3();
     this.maxJumpForce = DefaultMaxJumpForce;
     this.jumpDebounce = {
-      timeDebounce: 100,
+      timeDebounce: 500,
       timeLast: 0
     };
     this.viewDirection = new Quaternion();
