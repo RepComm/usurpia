@@ -8,6 +8,7 @@ import { GameInput } from "@repcomm/gameinput-ts";
 import { FlowCameraController } from "./controllers/flowcamera";
 import { Player } from "./units/player";
 import { LookCamera } from "@repcomm/three.lookcamera";
+import { AnimationMixer } from "three";
 
 /**Holds info on a scene, its physics, and the camera rendering it
  * stfu, i know there can be multiple cameras.
@@ -36,6 +37,9 @@ export class Renderer extends Panel {
   private currentMetaScene: MetaScene;
 
   private uiOverlay: Exponent;
+
+  animationMixers: Set<AnimationMixer>;
+
   getUI (): Exponent {
     return this.uiOverlay;
   }
@@ -70,6 +74,7 @@ export class Renderer extends Panel {
     });
 
     let scene = new THREE.Scene();
+    this.animationMixers = new Set();
 
     this.defaultMetaScene = {};
 
@@ -118,6 +123,14 @@ export class Renderer extends Panel {
           // addChildren: true
         }
       );
+
+      let mixer = new AnimationMixer(model.scene);
+
+      model.animations.forEach((clip)=>{
+        mixer.clipAction(clip).play();//.setLoop(THREE.LoopRepeat, -1);
+
+      });
+      this.animationMixers.add(mixer);
     });
 
     TEST_SCENE.getInstance().then((model)=>{
@@ -175,6 +188,11 @@ export class Renderer extends Panel {
     const renderIteration: FrameRequestCallback = (now) => {
       let delta = now - last;
       let deltaSeconds = delta / 1000;
+
+      //update all animations mixers tracked
+      for (let mixer of this.animationMixers) {
+        mixer.update(0.01);
+      }
 
       //animation
       player.update(delta);

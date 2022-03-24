@@ -11,49 +11,57 @@ const container = new Panel()
 
 import { PhysicsLoader } from "enable3d";
 import { GameInput } from "@repcomm/gameinput-ts";
+//TODO - add GameInputJson to exports of module
+import { GameInputJson } from "@repcomm/gameinput-ts/docs/gameinput";
 
 let input = GameInput.get();
 
-input.addJsonConfig({
-  axes: [
-    {
-      id: "walk",
-      influences: [
-        {
-          value: -1,
-          keys: ["w"]
-        },
-        {
-          value: 1,
-          keys: ["s"]
-        }
-      ]
-    },
-    {
-      id: "strafe",
-      influences: [
-        {
-          value: -1,
-          keys: ["a"]
-        },
-        {
-          value: 1,
-          keys: ["d"]
-        }
-      ]
-    }
-  ],
-  buttons: [
-    {
-      id: "jump",
-      influences: [
-        {
-          keys: [" "]
-        }
-      ]
-    }
-  ]
-});
+(async()=>{
+  let inputJsonMap: GameInputJson = await (await fetch("./resources/inputmap.json")).json();
+  console.log("controls loaded from inputmap.json", inputJsonMap);
+  input.addJsonConfig(inputJsonMap);
+})();
+
+// input.addJsonConfig({
+//   axes: [
+//     {
+//       id: "walk",
+//       influences: [
+//         {
+//           value: -1,
+//           keys: ["w"]
+//         },
+//         {
+//           value: 1,
+//           keys: ["s"]
+//         }
+//       ]
+//     },
+//     {
+//       id: "strafe",
+//       influences: [
+//         {
+//           value: -1,
+//           keys: ["a"]
+//         },
+//         {
+//           value: 1,
+//           keys: ["d"]
+//         }
+//       ]
+//     }
+//   ],
+//   buttons: [
+//     {
+//       id: "jump",
+//       influences: [
+//         {
+//           keys: [" "]
+//         }
+//       ]
+//     }
+//   ]
+// });
 
 async function main() {
   console.log("Loaded");

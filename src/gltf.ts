@@ -12,6 +12,8 @@ export const loadGLTF = (fpath: string) => new Promise<GLTF>(async (_resolve, _r
 });
 
 function cloneGLTF (from: GLTF): GLTF {
+  //TODO: instancing of GLTF scenes
+  //https://stackoverflow.com/questions/45669968/gltf-create-instances
   let scenes = [];
   let scene;
   for (let i=0; i<from.scenes.length; i++) {
